@@ -104,31 +104,7 @@
    - **用户名**: 默认 `admin`（可在系统设置中修改）
    - **密码**: 在【系统设置】中配置的 Subsonic 密码
 
-## 🛠️ 本地开发指南
 
-如果你希望参与贡献或在本地修改代码，本项目采用了前后端分离架构：
-
-### 后端 (FastAPI)
-```bash
-cd backend
-# 推荐使用虚拟环境
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# 启动开发服务器
-uvicorn app.main:app --reload --port 8000
-```
-
-### 前端 (Vue 3)
-```bash
-cd frontend
-npm install
-# 启动 Vite 开发服务器
-npm run dev
-```
-
-> 生产环境构建时，前端产物会被打包并复制到后端的 `static/` 目录中，由 FastAPI 直接托管，解决跨域与部署难题。
 
 ## 🤝 参与贡献
 
