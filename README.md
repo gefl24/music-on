@@ -20,7 +20,7 @@
 
 ## 🌟 核心特性
 
-- **🚀 异步极速扫描**：采用 Python 异步 I/O (AsyncIO) 机制构建强大的 AList 扫描器，无缝解析阿里云盘、百度网盘等海量云端音乐。扫描任务运行于后台，不阻塞主应用响应。
+- **🚀 异步极速扫描**：采用 Python 异步 I/O (AsyncIO) 机制构建强大的 AList 扫描器，无缝解析网盘海量云端音乐。扫描任务运行于后台，不阻塞主应用响应。
 - **📱 完美兼容 Subsonic**：内置兼容 Subsonic API (v1.16.1)，你可以使用任意支持 Subsonic 协议的客户端（如音流、Navidrome、DSub、PlaySub）全平台无缝串流。
 - **🌐 零流量云端直链播放**：创新架构设计！播放音频时，后端会智能重定向 (302) 到云盘直链，听无损音乐**完全不消耗本地服务器带宽与流量**，且无需磁盘缓存。
 - **🖼️ 智能缩略图优化**：内建基于 Pillow 的图像引擎，自动将提取的歌曲封面压缩为极小体积的 WebP 格式，配合前端虚拟列表与懒加载，万首曲库依然丝滑。
@@ -43,23 +43,7 @@
    version: '3.8'
 
    services:
-     postgres:
-       image: postgres:15-alpine
-       container_name: musicon-postgres
-       restart: always
-       environment:
-         POSTGRES_USER: musicon
-         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # 从 .env 加密读取
-         POSTGRES_DB: musicon
-       volumes:
-         - musicon_postgres_data:/var/lib/postgresql/data
-       healthcheck:
-         test: ["CMD-SHELL", "pg_isready -U musicon -d musicon"]
-         interval: 5s
-         timeout: 5s
-         retries: 5
-
-     app:
+     musicon:
        image: geelonn/musicon:latest
        container_name: musicon-app
        restart: always
@@ -72,7 +56,23 @@
          DATABASE_URL: postgresql+psycopg://musicon:${POSTGRES_PASSWORD}@postgres:5432/musicon
          SECRET_KEY: ${SECRET_KEY} # 会话签名密钥
        volumes:
-         - musicon_cover_cache:/app/data/covers
+         - ./musicon_cover_cache:/app/data/covers
+   
+     postgres:
+       image: postgres:15-alpine
+       container_name: musicon-postgres
+       restart: always
+       environment:
+         POSTGRES_USER: musicon
+         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # 从 .env 加密读取
+         POSTGRES_DB: musicon
+       volumes:
+         - ./musicon_postgres_data:/var/lib/postgresql/data
+       healthcheck:
+         test: ["CMD-SHELL", "pg_isready -U musicon -d musicon"]
+         interval: 5s
+         timeout: 5s
+         retries: 5
 
    volumes:
      musicon_postgres_data:
