@@ -29,8 +29,7 @@
 - **📦 极简部署体验**：后端 FastAPI + 前端静态托管同源打包。只需配合一个 PostgreSQL 数据库，一键 Docker Compose 拉起。官方提供 `amd64` / `arm64` 双架构镜像。
 
 ## 📸 界面预览
-https://github.com/gefl24/music-on/blob/main/%E9%A1%B5%E9%9D%A21.png
-![替代文字](https://github.com/gefl24/music-on/blob/main/%E9%A1%B5%E9%9D%A21.png)
+![首页](https://github.com/gefl24/music-on/blob/main/%E9%A1%B5%E9%9D%A21.png)
 
 ## 🚀 快速部署 (Docker Compose)
 
