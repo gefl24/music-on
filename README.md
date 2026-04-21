@@ -30,7 +30,7 @@
 
 ## 📸 界面预览
 https://github.com/gefl24/music-on/blob/main/%E9%A1%B5%E9%9D%A21.png
-
+![替代文字](https://github.com/gefl24/music-on/blob/main/%E9%A1%B5%E9%9D%A21.png)
 
 ## 🚀 快速部署 (Docker Compose)
 
