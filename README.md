@@ -30,7 +30,7 @@
 
 ## 📸 界面预览
 ![首页](https://github.com/gefl24/music-on/blob/main/%E9%A1%B5%E9%9D%A21.png)
-
+![歌单页](https://github.com/gefl24/music-on/blob/main/%E9%A1%B5%E9%9D%A21.png)
 ## 🚀 快速部署 (Docker Compose)
 
 最简单、最推荐的部署方式是使用 Docker Compose。
