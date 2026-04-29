@@ -31,7 +31,7 @@
 
 ## 📸 界面预览
 ![首页](https://github.com/gefl24/music-on/blob/main/tag/%E9%A1%B5%E9%9D%A21.png)
-![歌单页](https://github.com/gefl24/music-on/blob/main/tag/%E9%A1%B5%E9%9D%A22.png)
+![歌单页](https://github.com/gefl24/music-on/blob/main/tag/%E9%A1%B5%E9%9D%A23.png)
 
 ## 🚀 快速开始 (Docker Compose)
 ### 方案 A：默认 SQLite（推荐）
