@@ -136,7 +136,6 @@ docker compose up -d
 
 ## 🔗 相关链接
 
-- **GitHub 源码**: [gefl24/MusicOn](https://github.com/gefl24/music-on)
 - **提交 Issue**: [Report a bug](https://github.com/gefl24/music-on/issues)
 
 *如果觉得好用，欢迎在 GitHub 上给个 ⭐ Star！*
