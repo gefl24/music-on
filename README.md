@@ -1,7 +1,7 @@
 
 
 <div align="center">
-  <h1>MusicOn 🎵<img src="https://img.shields.io/docker/pulls/geelonn/musicon.svg" alt="Docker Pulls"></h1>
+  <h1>MusicOn 🎵<img src="https://github.com/gefl24/music-on/blob/main/tag/logo.svg" alt="Docker Pulls"></h1>
   <h3>面向云盘音乐库管理的现代个人音乐中心</h3>
   <p>支持 AList/网盘 挂载、FastAPI 极速扫描、Subsonic 协议接入以及 Vue 3 现代化管理后台</p>
 
