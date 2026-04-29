@@ -31,86 +31,116 @@
 ## 📸 界面预览
 ![首页](https://github.com/gefl24/music-on/blob/main/%E9%A1%B5%E9%9D%A21.png)
 ![歌单页](https://github.com/gefl24/music-on/blob/main/%E9%A1%B5%E9%9D%A22.png)
-## 🚀 快速部署 (Docker Compose)
 
-最简单、最推荐的部署方式是使用 Docker Compose。
+## 🚀 快速开始 (Docker Compose)
+### 方案 A：默认 SQLite（推荐）
+推荐使用 Docker Compose 进行部署。创建一个 `docker-compose.yml` 文件：
 
-1. **新建配置文件**：
-   创建一个目录，并在其中创建 `docker-compose.yml` 和 `.env`。
+```yaml
+services:
+  musicon:
+    image: geelonn/musicon:latest
+    container_name: musicon
+    environment:
+      DATABASE_URL: sqlite:///./data/musicon.db
+    ports:
+      - 8000:8000
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'python -c "import urllib.request; urllib.request.urlopen(\"http://127.0.0.1:8000/health\")"']
+      interval: 15s
+      timeout: 5s
+      retries: 10
+```
+### 方案 B：使用PostgreSQL
 
-   **docker-compose.yml**
-   ```yaml
-   version: '3.8'
+```yaml
+services:
+  musicon:
+    image: geelonn/musicon:latest
+    container_name: musicon-app
+    environment:
+      DATABASE_URL: postgresql+psycopg://musicon:${POSTGRES_PASSWORD:-change_me}@postgres:5432/musicon
+    ports:
+      - '${BACKEND_PORT:-8000}:8000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'python -c "import urllib.request; urllib.request.urlopen(\"http://127.0.0.1:8000/health\")"']
+      interval: 15s
+      timeout: 5s
+      retries: 10
 
-   services:
-     musicon:
-       image: geelonn/musicon:latest
-       container_name: musicon-app
-       restart: always
-       ports:
-         - "8000:8000"
-       depends_on:
-         postgres:
-           condition: service_healthy
-       environment:
-         DATABASE_URL: postgresql+psycopg://musicon:${POSTGRES_PASSWORD}@postgres:5432/musicon
-         SECRET_KEY: ${SECRET_KEY} # 会话签名密钥
-       volumes:
-         - ./musicon_cover_cache:/app/data/covers
-   
-     postgres:
-       image: postgres:15-alpine
-       container_name: musicon-postgres
-       restart: always
-       environment:
-         POSTGRES_USER: musicon
-         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # 从 .env 加密读取
-         POSTGRES_DB: musicon
-       volumes:
-         - ./musicon_postgres_data:/var/lib/postgresql/data
-       healthcheck:
-         test: ["CMD-SHELL", "pg_isready -U musicon -d musicon"]
-         interval: 5s
-         timeout: 5s
-         retries: 5
+  postgres:
+    image: postgres:16-alpine
+    container_name: musicon-postgres
+    environment:
+      POSTGRES_DB: musicon
+      POSTGRES_USER: musicon
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U musicon -d musicon']
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
-   volumes:
-     musicon_postgres_data:
-     musicon_cover_cache:
-   ```
+volumes:
+  postgres_data:
 
-   **.env**
-   ```env
-   # 强烈建议使用随机长字符串替换以下默认值
-   POSTGRES_PASSWORD=your_super_secret_db_password_here
-   SECRET_KEY=your_super_secret_session_key_here
-   ```
+```
 
-2. **一键启动**：
-   ```bash
-   docker compose up -d
-   ```
+一键拉起服务：
+```bash
+docker compose up -d
+```
 
-3. **访问控制台**：
-   服务启动后，打开浏览器访问 `http://localhost:8000` 即可进入 Web 管理后台。
+服务启动后，在浏览器访问 `http://localhost:8000` 即可进入 Web 控制台。
 
-## ⚙️ 初始化配置与使用
+---
 
-1. **安全配置**：默认密码 changeme ，首次登录后请立即前往【系统设置】配置你的 **Web 管理密码** 和 **Subsonic 客户端连接密码**。
-2. **对接 AList**：在【系统设置】中填入你的 AList 根地址（如 `http://192.168.x.x:5244`）以及具有相应目录读取权限的 AList Token。
-3. **导入音乐**：前往【扫描任务】页面，填入 AList 中存放音乐的挂载路径（如 `/阿里云盘/Music`）。点击新建扫描，后台会自动异步提取元数据。
+## ⚙️ 配置指南
+
+1. **登录控制台**：默认密码 changeme ，进入后请立即前往【系统设置】修改你的管理密码。
+2. **连接网盘**：在【系统设置】中填入你的夸克Token 或者 AList 地址（如 `http://192.168.x.x:5244`）和 Token。
+3. **扫描音乐**：前往【扫描任务】页面，填入网盘中存放音乐的挂载路径（如 `/Music`），点击新建扫描，后台会自动异步拉取歌曲。
 4. **配置 LX-Server (选填)**：若你想白嫖全网热歌榜单的在线流媒体播放，请在【扫描任务】顶部填入你部署的 LX-Server 地址，并点击“刷新网络榜单”。
 5. **客户端连接 (Subsonic)**：
    - **服务器地址**: `http://你的IP:8000`
-   - **用户名**: 默认 `admin`（可在系统设置中修改）
+   - **用户名**: `admin` (默认，可在设置中修改)
    - **密码**: 在【系统设置】中配置的 Subsonic 密码
 
+---
 
+## 🛠️ 环境变量说明
+
+| 变量名 | 必填 | 默认值 | 描述 |
+| :--- | :---: | :--- | :--- |
+| `DATABASE_URL` | ✅ | 无 | PostgreSQL 数据库连接串 |
+| `SECRET_KEY` | ✅ | 无 | 用于加密会话和 Cookie 的密钥 |
+| `PORT` | ❌ | `8000` | 容器内部监听端口 |
+| `TZ` | ❌ | `Asia/Shanghai` | 容器时区 |
+
+---
+
+## 🔗 相关链接
+
+- **GitHub 源码**: [gefl24/MusicOn](https://github.com/gefl24/music-on)
+- **提交 Issue**: [Report a bug](https://github.com/gefl24/music-on/issues)
+
+*如果觉得好用，欢迎在 GitHub 上给个 ⭐ Star！*
 
 ## 🤝 参与贡献
 
 非常欢迎提交 Pull Request (PR) 或者提出 Issue。无论是功能建议、Bug 修复，还是文档完善，都能帮助 MusicOn 变得更好！
 
-## 📄 开源协议
-
-本项目基于 [MIT License](LICENSE) 开源。
